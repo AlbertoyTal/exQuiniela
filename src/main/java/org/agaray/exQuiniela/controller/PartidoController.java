@@ -82,5 +82,13 @@ public class PartidoController {
 		return "redirect:/partido/r";
 	}
 
+	@GetMapping("quiniela")
+	public String quiniela(
+			ModelMap m
+			) {
+		m.put("jornadas",partidoService.getJornadas());
+		m.put("view","partido/quiniela");
+		return "_t/frame";
+	}
 
 }

@@ -1,7 +1,9 @@
 package org.agaray.exQuiniela.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.agaray.exQuiniela.entities.Partido;
 import org.agaray.exQuiniela.repository.EquipoRepository;
@@ -38,6 +40,18 @@ public class PartidoService {
 
 	public Collection<Partido> findByFecha(LocalDate fecha) {
 		return partidoRepository.findByFecha(fecha);
+	}
+
+	public List<Integer> getJornadas() {
+		List<Integer> jornadas = new ArrayList<>();
+		List<Partido> partidos = partidoRepository.findAll();
+		for ( Partido partido : partidos )  { 
+			int nJornada = partido.getnJornada();
+			if (!jornadas.contains(nJornada)) {
+				jornadas.add(nJornada);
+			}
+		}
+		return jornadas;
 	}
 
 }

@@ -1,0 +1,11 @@
+<div class="container">
+	<h1>Escoge la jornada</h1>
+	
+	<th:block th:each="nJornada : ${jornadas}">
+		
+		<form >
+			<input type="submit" name="nJornada" th:value="${nJornada}"/>
+		</form>
+		
+	</th:block>
+</div>
