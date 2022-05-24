@@ -18,25 +18,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/partido")
 public class PartidoController {
-	
+
 	@Autowired
 	private PartidoService partidoService;
-	
+
 	@Autowired
 	private EquipoService equipoService;
 
 	@GetMapping("r")
 	public String r(
-			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-			@RequestParam(value="fecha", required=false) 
-			LocalDate fecha,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @RequestParam(value = "fecha", required = false) LocalDate fecha,
 			ModelMap m) {
-		
+
 		m.put("view", "partido/r");
 		if (fecha == null) {
 			m.put("partidos", partidoService.findAll());
-		}
-		else {
+		} else {
 			m.put("partidos", partidoService.findByFecha(fecha));
 			m.put("fecha", fecha);
 		}
@@ -51,31 +48,27 @@ public class PartidoController {
 	}
 
 	@PostMapping("c")
-	public String cPost(
-			@RequestParam(value = "nJornada", required = false) int nJornada,
-			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-			@RequestParam(value = "fecha", required = false) LocalDate fecha,
-			@RequestParam(value = "gl", required = false) int gl,
-			@RequestParam(value = "gv", required = false) int gv,
+	public String cPost(@RequestParam(value = "nJornada", required = false) int nJornada,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @RequestParam(value = "fecha", required = false) LocalDate fecha,
+			@RequestParam(value = "gl", required = false) int gl, @RequestParam(value = "gv", required = false) int gv,
 			@RequestParam(value = "idLocal", required = false) Long idLocal,
-			@RequestParam(value = "idVisitante", required = false) Long idVisitante
-			) throws DangerException {
+			@RequestParam(value = "idVisitante", required = false) Long idVisitante) throws DangerException {
 		try {
-			if (fecha==null || idLocal==null || idVisitante==null) {
+			if (fecha == null || idLocal == null || idVisitante == null) {
 				throw new Exception("Los datos fecha, idLocal o idVisitante no pueden ser nulos");
 			}
-			if (gl<0 || gv<0) {
+			if (gl < 0 || gv < 0) {
 				throw new Exception("Los goles no pueden ser negativos");
 			}
-			if (nJornada<1 || nJornada>50) {
+			if (nJornada < 1 || nJornada > 50) {
 				throw new Exception("El número de jornada debe estar en el rango 1..50");
 			}
-			if (idLocal==idVisitante) {
+			if (idLocal == idVisitante) {
 				throw new Exception("No se permiten partidos contra uno mismo");
 			}
-			
-			partidoService.save(nJornada,fecha,gl,gv,idLocal,idVisitante);
-			
+
+			partidoService.save(nJornada, fecha, gl, gv, idLocal, idVisitante);
+
 		} catch (Exception e) {
 			PRG.error(e.getMessage(), "/partido/c");
 		}
@@ -83,11 +76,24 @@ public class PartidoController {
 	}
 
 	@GetMapping("quiniela")
-	public String quiniela(
-			ModelMap m
-			) {
-		m.put("jornadas",partidoService.getJornadas());
-		m.put("view","partido/quiniela");
+	public String quiniela(ModelMap m) {
+		m.put("jornadas", partidoService.getJornadas());
+		m.put("view", "partido/quiniela");
+		return "_t/frame";
+	}
+
+	@GetMapping("quinielaFinal")
+	public String quinielaFinal(@RequestParam("nJornada") int nJornada, ModelMap m) throws DangerException {
+		try {
+			if (!partidoService.existeJornada(nJornada)) {
+				throw new Exception("La jornada " + nJornada + " no existe");
+			}
+			m.put("nJornada", nJornada);
+			m.put("partidos", partidoService.findByJornada(nJornada));
+			m.put("view", "partido/quinielaFinal");
+		} catch (Exception e) {
+			PRG.error(e.getMessage(),"/partido/quiniela");
+		}
 		return "_t/frame";
 	}
 

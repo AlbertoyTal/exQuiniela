@@ -97,6 +97,18 @@ public class Partido {
 		this.visitante = visitante;
 	}
 
+	//=============================
+	
+	public String getResultado() {
+		String sol="X";
+		if (this.gl > this.gv ) {
+			sol = "1";
+		}
+		if (this.gv > this.gl ) {
+			sol = "2";
+		}
+		return sol;
+	}
 	
 
 	

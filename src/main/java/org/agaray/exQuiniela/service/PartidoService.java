@@ -54,4 +54,18 @@ public class PartidoService {
 		return jornadas;
 	}
 
+	public boolean existeJornada(int nJornada) {
+		boolean sol = false;
+		for (Partido partido : partidoRepository.findAll()) {
+			if (partido.getnJornada()==nJornada) {
+				sol = true;
+			}
+		}
+		return sol;
+	}
+
+	public Collection<Partido> findByJornada(int nJornada) {
+		return partidoRepository.findBynJornadaOrderByFechaAsc(nJornada);
+	}
+
 }
